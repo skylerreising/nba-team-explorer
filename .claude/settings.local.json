@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:www.balldontlie.io)"
+      "WebFetch(domain:www.balldontlie.io)",
+      "WebFetch(domain:docs.balldontlie.io)"
     ],
     "deny": [],
     "ask": []
