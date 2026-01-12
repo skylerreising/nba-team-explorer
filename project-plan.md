@@ -259,29 +259,29 @@ src/
 ## Project Setup Checklist
 
 ### Version Control & GitHub
-- [ ] Initialize git repository (`git init`)
-- [ ] Create `.gitignore` with:
+- [x] Initialize git repository (`git init`)
+- [x] Create `.gitignore` with:
   - `node_modules/`
   - `.env` and `.env.local` (API key)
   - `dist/` (build output)
   - IDE files (`.vscode/`, `.idea/`)
   - OS files (`.DS_Store`, `Thumbs.db`)
-- [ ] Create GitHub repository
-- [ ] Connect local repo to GitHub remote
+- [x] Create GitHub repository
+- [x] Connect local repo to GitHub remote
 - [ ] Set up GitHub Pages deployment (gh-pages package or GitHub Actions)
 
 ### Environment & Security
-- [ ] Create `.env` file for API key (gitignored)
-- [ ] Create `.env.example` as template (committed, no real values)
-- [ ] Document environment variable setup in README
+- [x] Create `.env` file for API key (gitignored)
+- [x] Create `.env.example` as template (committed, no real values)
+- [x] Document environment variable setup in README
 
 ### Code Quality
-- [ ] ESLint configured (included with Vite React template)
-- [ ] Prettier configured
-- [ ] TypeScript configured (use Vite React-TS template)
+- [x] ESLint configured (included with Vite React template)
+- [x] Prettier configured
+- [x] TypeScript configured (use Vite React-TS template)
 
 ### Documentation
-- [ ] Create README.md with:
+- [x] Create README.md with:
   - Project description
   - Tech stack overview
   - Setup instructions (clone, install, env vars)
@@ -289,8 +289,8 @@ src/
   - How to deploy
 
 ### Package Management
-- [ ] Use npm (generates `package-lock.json`)
-- [ ] Commit lock file to repository
+- [x] Use npm (generates `package-lock.json`)
+- [x] Commit lock file to repository
 
 ---
 
@@ -361,27 +361,55 @@ Cursor-based pagination with `next_cursor`, `prev_cursor`, `per_page` fields
 
 ## Next Steps
 
-1. Initialize Vite + React + TypeScript project
-2. Initialize git repository
-3. Create GitHub repository and connect remote
-4. Verify/enhance `.gitignore` (Vite template includes one)
-5. Install dependencies:
+1. ~~Initialize Vite + React + TypeScript project~~ ✅
+2. ~~Initialize git repository~~ ✅
+3. ~~Create GitHub repository and connect remote~~ ✅
+4. ~~Verify/enhance `.gitignore` (Vite template includes one)~~ ✅
+5. ~~Install dependencies:~~ ✅
    - styled-components
    - @tanstack/react-query
    - react-router-dom
    - jest, @testing-library/react (can defer until after MVP)
-6. Configure Prettier
-7. Set up project folder structure
-8. Create `.env` and `.env.example` files
-9. Get API key from balldontlie.io
-10. Create README.md
-11. Create reusable UI components (loading, error states)
-12. Build MVP features
+6. ~~Configure Prettier~~ ✅
+7. ~~Set up project folder structure~~ ✅
+8. ~~Create `.env` and `.env.example` files~~ ✅
+9. ~~Get API key from balldontlie.io~~ ✅
+10. ~~Create README.md~~ ✅
+11. ~~Create reusable UI components (loading, error states)~~ ✅
+12. ~~Build MVP features~~ ✅ (Teams list + Team detail with roster)
 13. Add tests (incrementally)
 14. Configure GitHub Pages deployment
+
+---
+
+## Completed Features
+
+### Teams List Page (`/`)
+- Displays all 30 NBA teams in a responsive grid
+- Team cards link to detail pages
+- Loading and error states handled
+
+### Team Detail Page (`/teams/:teamId`)
+- Team name, conference, and division
+- Full roster with player details:
+  - Jersey number
+  - Name
+  - Position
+  - Height
+  - Weight
+  - College
+  - Country
+- Back navigation to teams list
+
+### Technical Implementation
+- React Query caching with appropriate stale times
+- Styled-components theming (NBA colors)
+- TypeScript types for API responses
+- Mobile-first responsive design
 
 ---
 
 ## Notes
 
 - Update this document as decisions are made
+- **TODO**: Revisit Prettier settings after more development (currently using defaults)
