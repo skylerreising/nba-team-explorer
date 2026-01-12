@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import styled from "styled-components";
 import { useTeams, usePlayersByTeam, useRecentGames, useUpcomingGames } from "../../api/queries";
@@ -93,6 +94,17 @@ const Message = styled.div`
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
+const RateLimitWarning = styled.div`
+  background: ${({ theme }) => theme.colors.surface};
+  border: 1px solid ${({ theme }) => theme.colors.secondary};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  padding: ${({ theme }) => theme.spacing.md};
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-size: 0.9rem;
+  text-align: center;
+`;
+
 const Section = styled.section`
   margin-bottom: ${({ theme }) => theme.spacing.xl};
 `;
@@ -140,6 +152,7 @@ const GameStatus = styled.div`
 export function TeamDetailPage() {
   const { teamId } = useParams<{ teamId: string }>();
   const teamIdNum = Number(teamId);
+  const [showRateLimitWarning, setShowRateLimitWarning] = useState(false);
 
   const { data: teamsData } = useTeams();
   const {
@@ -157,6 +170,23 @@ export function TeamDetailPage() {
     isLoading: upcomingLoading,
     error: upcomingError,
   } = useUpcomingGames(teamIdNum);
+
+  const isAnyLoading = playersLoading || recentLoading || upcomingLoading;
+
+  useEffect(() => {
+    if (!isAnyLoading) {
+      setShowRateLimitWarning(false);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      if (isAnyLoading) {
+        setShowRateLimitWarning(true);
+      }
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [isAnyLoading]);
 
   const team = teamsData?.data.find((t) => t.id === teamIdNum);
 
@@ -209,6 +239,13 @@ export function TeamDetailPage() {
           {team.conference} Conference • {team.division} Division
         </TeamInfo>
       </TeamHeader>
+
+      {showRateLimitWarning && (
+        <RateLimitWarning>
+          Loading is taking longer than usual. The API may be rate-limited.
+          Please wait a moment and the data will load shortly.
+        </RateLimitWarning>
+      )}
 
       <Section>
         <SectionTitle>Recent Results</SectionTitle>
