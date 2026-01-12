@@ -97,7 +97,11 @@ export function TeamDetailPage() {
   } = usePlayersByTeam(teamIdNum);
 
   const team = teamsData?.data.find((t) => t.id === teamIdNum);
-  const players = playersData?.data ?? [];
+  const players = [...(playersData?.data ?? [])].sort((a, b) => {
+    const numA = parseInt(a.jersey_number) || 999;
+    const numB = parseInt(b.jersey_number) || 999;
+    return numA - numB;
+  });
 
   if (!team) {
     return (
