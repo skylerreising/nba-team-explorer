@@ -8,6 +8,22 @@ const Container = styled.main`
   padding: ${({ theme }) => theme.spacing.lg};
 `;
 
+const HeaderLinks = styled.nav`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.md};
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
+  font-size: 0.9rem;
+
+  a {
+    color: ${({ theme }) => theme.colors.primary};
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
 const Title = styled.h1`
   color: ${({ theme }) => theme.colors.primary};
   margin-bottom: ${({ theme }) => theme.spacing.lg};
@@ -17,6 +33,9 @@ const TeamsGrid = styled.ul`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: ${({ theme }) => theme.spacing.md};
+  list-style: none;
+  padding: 0;
+  margin: 0;
 `;
 
 const TeamCard = styled.li`
@@ -32,9 +51,20 @@ const TeamCard = styled.li`
 
   a {
     display: block;
-    font-weight: 500;
-    font-size: 1.1rem;
   }
+`;
+
+const TeamName = styled.span`
+  display: block;
+  font-weight: 500;
+  font-size: 1.1rem;
+`;
+
+const TeamCity = styled.span`
+  display: block;
+  font-size: 0.9rem;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  margin-top: ${({ theme }) => theme.spacing.xs};
 `;
 
 const Message = styled.div`
@@ -66,11 +96,31 @@ export function TeamsPage() {
 
   return (
     <Container>
+      <HeaderLinks>
+        <a
+          href="https://docs.balldontlie.io"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View API Docs
+        </a>
+        <span>|</span>
+        <a
+          href="https://skylerreising.github.io/skyler-reising/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          My Portfolio
+        </a>
+      </HeaderLinks>
       <Title>NBA Teams</Title>
       <TeamsGrid>
         {teams.map((team) => (
           <TeamCard key={team.id}>
-            <Link to={`/teams/${team.id}`}>{team.full_name}</Link>
+            <Link to={`/teams/${team.id}`}>
+              <TeamName>Name: {team.full_name}</TeamName>
+              <TeamCity>City: {team.city}</TeamCity>
+            </Link>
           </TeamCard>
         ))}
       </TeamsGrid>
