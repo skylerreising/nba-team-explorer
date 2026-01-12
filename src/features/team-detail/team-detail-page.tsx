@@ -35,9 +35,16 @@ const TeamInfo = styled.p`
 
 const SectionTitle = styled.h2`
   color: ${({ theme }) => theme.colors.text};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
+  margin-bottom: ${({ theme }) => theme.spacing.sm};
   padding-bottom: ${({ theme }) => theme.spacing.sm};
   border-bottom: 2px solid ${({ theme }) => theme.colors.border};
+`;
+
+const SectionNote = styled.p`
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-size: 0.85rem;
+  font-style: italic;
+  margin-bottom: ${({ theme }) => theme.spacing.md};
 `;
 
 const RosterList = styled.ul`
@@ -123,6 +130,10 @@ export function TeamDetailPage() {
 
       <section>
         <SectionTitle>Roster</SectionTitle>
+        <SectionNote>
+          Players historically associated with this team, not necessarily the active roster.
+          This list is not exhaustive and may not include all historically significant players.
+        </SectionNote>
         {playersLoading && <Message>Loading roster...</Message>}
         {playersError && (
           <Message>Error loading roster: {playersError.message}</Message>
