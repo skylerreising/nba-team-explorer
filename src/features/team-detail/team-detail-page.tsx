@@ -42,8 +42,8 @@ const SectionTitle = styled.h2`
 
 const RosterList = styled.ul`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: ${({ theme }) => theme.spacing.sm};
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: ${({ theme }) => theme.spacing.md};
 `;
 
 const PlayerCard = styled.li`
@@ -52,7 +52,7 @@ const PlayerCard = styled.li`
   border-radius: ${({ theme }) => theme.borderRadius};
   padding: ${({ theme }) => theme.spacing.md};
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: ${({ theme }) => theme.spacing.md};
 `;
 
@@ -72,9 +72,11 @@ const PlayerName = styled.span`
   display: block;
 `;
 
-const PlayerPosition = styled.span`
+const PlayerDetails = styled.div`
+  margin-top: ${({ theme }) => theme.spacing.xs};
+  font-size: 0.85rem;
   color: ${({ theme }) => theme.colors.textSecondary};
-  font-size: 0.9rem;
+  line-height: 1.4;
 `;
 
 const Message = styled.div`
@@ -125,12 +127,18 @@ export function TeamDetailPage() {
           <RosterList>
             {players.map((player) => (
               <PlayerCard key={player.id}>
-                <JerseyNumber>#{player.jersey_number || "—"}</JerseyNumber>
+                <JerseyNumber># {player.jersey_number || "—"}</JerseyNumber>
                 <PlayerInfo>
                   <PlayerName>
                     {player.first_name} {player.last_name}
                   </PlayerName>
-                  <PlayerPosition>{player.position || "N/A"}</PlayerPosition>
+                  <PlayerDetails>
+                    <div>Position: {player.position || "N/A"}</div>
+                    {player.height && <div>Height: {player.height}</div>}
+                    {player.weight && <div>Weight: {player.weight} lbs</div>}
+                    {player.college && <div>College: {player.college}</div>}
+                    {player.country && <div>Country: {player.country}</div>}
+                  </PlayerDetails>
                 </PlayerInfo>
               </PlayerCard>
             ))}
