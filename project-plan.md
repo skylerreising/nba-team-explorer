@@ -64,9 +64,11 @@ A portfolio project using the [balldontlie API](https://www.balldontlie.io) to d
 | Feature | Endpoint | Cache Strategy |
 |---------|----------|----------------|
 | Team Directory | `/nba/teams` | Cache for days/weeks (rarely changes) |
-| Team Standings | `/nba/standings` | Cache for hours (updates daily) |
-| Team Season Stats | `/nba/team_season_stats` | Cache for hours (updates after games) |
 | Team Roster | `/nba/players` (filtered) | Cache for hours (trades are rare) |
+| Recent Games | `/nba/games` (filtered) | Cache for 1 hour |
+| Upcoming Games | `/nba/games` (filtered) | Cache for 1 hour |
+
+**Note**: Team Standings (`/standings`) and Team Season Stats (`/team_season_averages`) require the paid GOAT tier ($39.99/month) and are not included in this free-tier implementation.
 
 **User Flow**:
 1. User visits app → Fetch teams once, cache long-term
@@ -391,6 +393,8 @@ Cursor-based pagination with `next_cursor`, `prev_cursor`, `per_page` fields
 
 ### Team Detail Page (`/teams/:teamId`)
 - Team name, conference, and division
+- Recent Results: Last 5 completed games with scores and W/L indicator
+- Upcoming Schedule: Next 5 scheduled games
 - Full roster with player details:
   - Jersey number
   - Name
@@ -406,6 +410,7 @@ Cursor-based pagination with `next_cursor`, `prev_cursor`, `per_page` fields
 - Styled-components theming (NBA colors)
 - TypeScript types for API responses
 - Mobile-first responsive design
+- Games feature using free-tier `/games` endpoint
 
 ---
 
