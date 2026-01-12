@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import styled from "styled-components";
-import { useTeams, usePlayersByTeam } from "../../api/queries";
+import { useTeams, usePlayersByTeam, useRecentGames, useUpcomingGames } from "../../api/queries";
+import type { Game } from "../../types/api.types";
 
 const Container = styled.main`
   max-width: ${({ theme }) => theme.maxWidth};
@@ -92,6 +93,50 @@ const Message = styled.div`
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
+const Section = styled.section`
+  margin-bottom: ${({ theme }) => theme.spacing.xl};
+`;
+
+const GamesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: ${({ theme }) => theme.spacing.md};
+`;
+
+const GameCard = styled.div`
+  background: ${({ theme }) => theme.colors.surface};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  padding: ${({ theme }) => theme.spacing.md};
+`;
+
+const GameDate = styled.div`
+  font-size: 0.85rem;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  margin-bottom: ${({ theme }) => theme.spacing.xs};
+`;
+
+const GameMatchup = styled.div`
+  font-weight: 500;
+  margin-bottom: ${({ theme }) => theme.spacing.xs};
+`;
+
+const GameScore = styled.div<{ $isWin?: boolean }>`
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: ${({ theme, $isWin }) =>
+    $isWin === undefined
+      ? theme.colors.text
+      : $isWin
+        ? theme.colors.primary
+        : theme.colors.secondary};
+`;
+
+const GameStatus = styled.div`
+  font-size: 0.9rem;
+  color: ${({ theme }) => theme.colors.textSecondary};
+`;
+
 export function TeamDetailPage() {
   const { teamId } = useParams<{ teamId: string }>();
   const teamIdNum = Number(teamId);
@@ -102,8 +147,45 @@ export function TeamDetailPage() {
     isLoading: playersLoading,
     error: playersError,
   } = usePlayersByTeam(teamIdNum);
+  const {
+    data: recentGamesData,
+    isLoading: recentLoading,
+    error: recentError,
+  } = useRecentGames(teamIdNum);
+  const {
+    data: upcomingGamesData,
+    isLoading: upcomingLoading,
+    error: upcomingError,
+  } = useUpcomingGames(teamIdNum);
 
   const team = teamsData?.data.find((t) => t.id === teamIdNum);
+
+  const formatGameDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const getOpponent = (game: Game) => {
+    const isHome = game.home_team.id === teamIdNum;
+    const opponent = isHome ? game.visitor_team : game.home_team;
+    const prefix = isHome ? "vs" : "@";
+    return `${prefix} ${opponent.full_name}`;
+  };
+
+  const getGameResult = (game: Game) => {
+    const isHome = game.home_team.id === teamIdNum;
+    const teamScore = isHome ? game.home_team_score : game.visitor_team_score;
+    const opponentScore = isHome ? game.visitor_team_score : game.home_team_score;
+    const isWin = teamScore > opponentScore;
+    return {
+      display: `${isWin ? "W" : "L"} ${teamScore}-${opponentScore}`,
+      isWin,
+    };
+  };
   const players = [...(playersData?.data ?? [])].sort((a, b) => {
     const numA = parseInt(a.jersey_number) || 999;
     const numB = parseInt(b.jersey_number) || 999;
@@ -128,7 +210,54 @@ export function TeamDetailPage() {
         </TeamInfo>
       </TeamHeader>
 
-      <section>
+      <Section>
+        <SectionTitle>Recent Results</SectionTitle>
+        {recentLoading && <Message>Loading recent games...</Message>}
+        {recentError && (
+          <Message>Error loading recent games: {recentError.message}</Message>
+        )}
+        {!recentLoading && !recentError && (recentGamesData?.data?.length ?? 0) === 0 && (
+          <Message>No recent games found</Message>
+        )}
+        {!recentLoading && !recentError && (recentGamesData?.data?.length ?? 0) > 0 && (
+          <GamesGrid>
+            {recentGamesData?.data.map((game) => {
+              const result = getGameResult(game);
+              return (
+                <GameCard key={game.id}>
+                  <GameDate>{formatGameDate(game.date)}</GameDate>
+                  <GameMatchup>{getOpponent(game)}</GameMatchup>
+                  <GameScore $isWin={result.isWin}>{result.display}</GameScore>
+                </GameCard>
+              );
+            })}
+          </GamesGrid>
+        )}
+      </Section>
+
+      <Section>
+        <SectionTitle>Upcoming Schedule</SectionTitle>
+        {upcomingLoading && <Message>Loading upcoming games...</Message>}
+        {upcomingError && (
+          <Message>Error loading upcoming games: {upcomingError.message}</Message>
+        )}
+        {!upcomingLoading && !upcomingError && (upcomingGamesData?.data?.length ?? 0) === 0 && (
+          <Message>No upcoming games scheduled</Message>
+        )}
+        {!upcomingLoading && !upcomingError && (upcomingGamesData?.data?.length ?? 0) > 0 && (
+          <GamesGrid>
+            {upcomingGamesData?.data.map((game) => (
+              <GameCard key={game.id}>
+                <GameDate>{formatGameDate(game.date)}</GameDate>
+                <GameMatchup>{getOpponent(game)}</GameMatchup>
+                <GameStatus>{game.status}</GameStatus>
+              </GameCard>
+            ))}
+          </GamesGrid>
+        )}
+      </Section>
+
+      <Section>
         <SectionTitle>Roster</SectionTitle>
         <SectionNote>
           Players historically associated with this team, not necessarily the active roster.
@@ -159,7 +288,7 @@ export function TeamDetailPage() {
             ))}
           </RosterList>
         )}
-      </section>
+      </Section>
     </Container>
   );
 }
