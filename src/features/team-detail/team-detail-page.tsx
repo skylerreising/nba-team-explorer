@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import styled from "styled-components";
-import { useTeams, usePlayersByTeam, useRecentGames, useUpcomingGames } from "../../api/queries";
+import { useTeams, usePlayersByTeam, useRecentGames } from "../../api/queries";
 import type { Game } from "../../types/api.types";
 
 const Container = styled.main`
@@ -144,11 +144,6 @@ const GameScore = styled.div<{ $isWin?: boolean }>`
         : theme.colors.secondary};
 `;
 
-const GameStatus = styled.div`
-  font-size: 0.9rem;
-  color: ${({ theme }) => theme.colors.textSecondary};
-`;
-
 export function TeamDetailPage() {
   const { teamId } = useParams<{ teamId: string }>();
   const teamIdNum = Number(teamId);
@@ -165,13 +160,8 @@ export function TeamDetailPage() {
     isLoading: recentLoading,
     error: recentError,
   } = useRecentGames(teamIdNum);
-  const {
-    data: upcomingGamesData,
-    isLoading: upcomingLoading,
-    error: upcomingError,
-  } = useUpcomingGames(teamIdNum);
 
-  const isAnyLoading = playersLoading || recentLoading || upcomingLoading;
+  const isAnyLoading = playersLoading || recentLoading;
 
   useEffect(() => {
     if (!isAnyLoading) {
@@ -268,28 +258,6 @@ export function TeamDetailPage() {
                 </GameCard>
               );
             })}
-          </GamesGrid>
-        )}
-      </Section>
-
-      <Section>
-        <SectionTitle>Upcoming Schedule</SectionTitle>
-        {upcomingLoading && <Message>Loading upcoming games...</Message>}
-        {upcomingError && (
-          <Message>Error loading upcoming games: {upcomingError.message}</Message>
-        )}
-        {!upcomingLoading && !upcomingError && (upcomingGamesData?.data?.length ?? 0) === 0 && (
-          <Message>No upcoming games scheduled</Message>
-        )}
-        {!upcomingLoading && !upcomingError && (upcomingGamesData?.data?.length ?? 0) > 0 && (
-          <GamesGrid>
-            {upcomingGamesData?.data.map((game) => (
-              <GameCard key={game.id}>
-                <GameDate>{formatGameDate(game.date)}</GameDate>
-                <GameMatchup>{getOpponent(game)}</GameMatchup>
-                <GameStatus>{game.status}</GameStatus>
-              </GameCard>
-            ))}
           </GamesGrid>
         )}
       </Section>
